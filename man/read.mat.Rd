@@ -1,0 +1,75 @@
+\name{read.mat}
+\alias{read.mat}
+\title{Read Matlab file}
+\usage{
+  read.mat(filename)
+}
+\arguments{
+  \item{filename}{Character string, with the MAT file or
+  URL to read.}
+}
+\value{
+  A list with the variables read.
+}
+\description{
+  Reads the values in a mat-file to a list.
+}
+\details{
+  Reads the values in a mat-file and stores them in a list.
+}
+\note{
+  \itemize{ \item A sparse complex matrix is read as a
+  dense complex matrix.
+
+  \item A sparse logical matrix is read as a 'lgCMatrix'
+
+  \item A sparse matrix is read as a 'dgCMatrix'
+
+  \item A matrix of dimension \code{1 x n} or \code{n x 1}
+  is read as a vector
+
+  \item A structure is read as a named list with fields.
+
+  \item A cell array is read as an unnamed list with cell
+  data }
+}
+\examples{
+\dontrun{
+library(rmatio)
+
+## Read a version 4 MAT file with little-endian byte ordering
+filename <- system.file('extdata/matio_test_cases_v4_le.mat', package='rmatio')
+m <- read.mat(filename)
+
+## View content
+str(m)
+
+## Read a version 4 MAT file with big-endian byte ordering.
+filename <- system.file('extdata/matio_test_cases_v4_be.mat', package='rmatio')
+m <- read.mat(filename)
+
+## View content
+str(m)
+
+## Read a compressed version 5 MAT file
+filename <- system.file('extdata/matio_test_cases_compressed_le.mat', package='rmatio')
+m <- read.mat(filename)
+
+## View content
+str(m)
+
+## Read a compressed version 5 MAT file
+url <- paste("http://sourceforge.net/p/matio/matio_test_datasets/ci/",
+             "master/tree/matio_test_cases_compressed_le.mat?format=raw",
+             sep="")
+m <- read.mat(url)
+
+## View content
+str(m)
+}
+}
+\seealso{
+  See \code{\link[rmatio:write.mat]{write.mat}} for more
+  details and examples.
+}
+

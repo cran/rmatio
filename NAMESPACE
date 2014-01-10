@@ -1,0 +1,6 @@
+exportMethods(write.mat)
+export(read.mat)
+import(lattice)
+import(Matrix)
+import(methods)
+useDynLib(rmatio)

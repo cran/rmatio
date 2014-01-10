@@ -1,0 +1,143 @@
+\docType{methods}
+\name{write.mat-methods}
+\alias{write.mat}
+\alias{write.mat,list-method}
+\alias{write.mat-methods}
+\title{Write Matlab file}
+\arguments{
+  \item{object}{The \code{object} to write.}
+
+  \item{filename}{The MAT file to write.}
+
+  \item{compression}{Use compression when writing
+  variables. Defaults to TRUE.}
+
+  \item{version}{MAT file version to create. Currently only
+  support for Matlab level-5 file (MAT5) from rmatio
+  package.}
+}
+\value{
+  invisible NULL
+}
+\description{
+  Writes the values in a list to a mat-file.
+}
+\details{
+  Writes the values in the list to a mat-file. All values
+  in the list must have unique names.
+}
+\note{
+  \itemize{ \item A vector is saved as a \code{1 x length}
+  array
+
+  \item Support for writing a sparse matrix of type
+  'dgCMatrix' or 'lgCMatrix' to file }
+}
+\examples{
+\dontrun{
+filename <- tempfile(fileext = ".mat")
+
+## Example how to read and write an integer vector with rmatio
+write.mat(list(a=1:5), filename=filename)
+a <- as.integer(read.mat(filename)[["a"]])
+
+stopifnot(identical(a, 1:5))
+
+unlink(filename)
+
+## Read a compressed version 5 MAT file
+m <- read.mat(system.file("extdata/matio_test_cases_compressed_le.mat",
+                          package='rmatio'))
+
+## Write an uncompressed version 5 MAT file
+write.mat(m, filename="test-uncompressed.mat", compression=FALSE, version="MAT5")
+
+## Write a compressed version 5 MAT file
+write.mat(m, filename="test-compressed.mat", compression=TRUE, version="MAT5")
+
+## Check that the content of the files are identical
+identical(read.mat("test-uncompressed.mat"), read.mat("test-compressed.mat"))
+
+unlink("test-uncompressed.mat")
+unlink("test-compressed.mat")
+
+## Example how to read and write a S4 class with rmatio
+## Create 'DemoS4Mat' class
+setClass("DemoS4Mat",
+         representation(a = "dgCMatrix",
+                        b = "integer",
+                        c = "matrix",
+                        d = "numeric"))
+
+## Create a function to coerce a 'DemoS4Mat' object to a list.
+setAs(from="DemoS4Mat",
+      to="list",
+      def=function(from)
+      {
+        return(list(a=from@a,
+                    b=from@b,
+                    c=from@c,
+                    d=from@d))
+      }
+)
+
+## Create a function to coerce a list to a 'DemoS4Mat' object.
+setAs(from="list",
+      to="DemoS4Mat",
+      def=function(from)
+      {
+        return(new("DemoS4Mat",
+                    a=from[["a"]],
+                    b=as.integer(from[["b"]]),
+                    c=from[["c"]],
+                    d=from[["d"]]))
+      }
+)
+
+## Define a method to write a 'DemoS4Mat' object to a MAT file.
+setMethod("write.mat",
+          signature(object = "DemoS4Mat"),
+          function(object,
+                   filename,
+                   compression,
+                   version)
+          {
+            ## Coerce the 'DemoS4Mat' object to a list and
+            ## call 'rmatio' 'write.mat' with the list.
+            return(write.mat(as(object, "list"),
+                             filename,
+                             compression,
+                             version))
+          }
+)
+
+## Create a new 'DemoS4Mat' object
+demoS4mat <- new("DemoS4Mat",
+                 a = Matrix(c(0, 0, 0, 0, 0, 0, 1, 0, 0,
+                              0, 0, 0, 0, 0, 0, 0, 1, 0,
+                              0, 0, 0, 0, 0, 0, 0, 0, 1),
+                              nrow=3,
+                              ncol=9,
+                              byrow=TRUE,
+                              sparse=TRUE),
+                 b = 1:5,
+                 c = matrix(as.numeric(1:9), nrow=3),
+                 d = c(6.0, 7.0, 8.0))
+
+## Write to MAT file
+write.mat(demoS4mat, filename)
+
+## Read the MAT file
+demoS4mat.2 <- as(read.mat(filename), "DemoS4Mat")
+
+## Check result
+stopifnot(identical(demoS4mat, demoS4mat.2))
+
+unlink(filename)
+}
+}
+\author{
+  Stefan Widgren
+}
+\keyword{methods}
+
