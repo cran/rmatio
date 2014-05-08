@@ -36,6 +36,11 @@ read_mat_cell(SEXP list,
               matvar_t *matvar);
 
 static int
+read_mat_struct(SEXP list,
+                int index,
+                matvar_t *matvar);
+
+static int
 write_elmt(const SEXP elmt,
            mat_t *mat,
            const char *name,
@@ -2577,6 +2582,7 @@ read_structure_array_with_fields(SEXP list,
             break;
 
         case MAT_C_CELL:
+        case MAT_C_STRUCT:
             s = R_NilValue;
             break;
 
@@ -2642,6 +2648,20 @@ read_structure_array_with_fields(SEXP list,
 
             case MAT_C_CELL:
                 err = read_mat_cell(struc, i, field);
+                break;
+
+            case MAT_C_STRUCT:
+                err = read_mat_struct(struc, i, field);
+                break;
+
+            case MAT_C_EMPTY:
+                err = 0;
+                break;
+
+            case MAT_C_FUNCTION:
+            case MAT_C_OPAQUE:
+                err = 0;
+                warning("Function class type read as NULL: %s", fieldnames[i]);
                 break;
 
             default:
@@ -3154,7 +3174,6 @@ SEXP read_mat(const SEXP filename)
     const char err_reading_mat_file[] = "Error reading MAT file";
     const char err_mat_c_empty[] = "Not implemented support to read matio class type MAT_C_EMPTY";
     const char err_mat_c_object[] = "Not implemented support to read matio class type MAT_C_OBJECT";
-    const char err_mat_c_function[] = "Not implemented support to read matio class type MAT_C_FUNCTION";
     const char *err_msg = NULL;
 
     if (filename == R_NilValue)
@@ -3225,9 +3244,10 @@ SEXP read_mat(const SEXP filename)
             break;
 
         case MAT_C_FUNCTION:
-            err = 1;
-            err_msg = err_mat_c_function;
-            goto cleanup;
+        case MAT_C_OPAQUE:
+            err = 0;
+            warning("Function class type read as NULL: %s", matvar->name);
+            break;
 
         default:
             err = 1;

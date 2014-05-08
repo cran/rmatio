@@ -25,7 +25,7 @@
 ##'   \item Support for writing a sparse matrix of type 'dgCMatrix' or 'lgCMatrix'
 ##'     to file
 ##' }
-##' @name write.mat-methods
+##' @rdname write.mat-methods
 ##' @aliases write.mat
 ##' @aliases write.mat-methods
 ##' @aliases write.mat,list-method
@@ -38,6 +38,7 @@
 ##' for Matlab level-5 file (MAT5) from rmatio package.
 ##' @return invisible NULL
 ##' @keywords methods
+##' @include have_lib.r
 ##' @export
 ##' @useDynLib rmatio
 ##' @author Stefan Widgren
@@ -150,6 +151,9 @@ setGeneric("write.mat",
                     compression = TRUE,
                     version = c('MAT5')) standardGeneric("write.mat"))
 
+##' @rdname write.mat-methods
+##' @include have_lib.r
+##' @export
 setMethod("write.mat",
           signature(object = "list"),
           function(object,
