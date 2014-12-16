@@ -1,6 +1,6 @@
-ec890a38c132827af3593e182bcf1ee5 *DESCRIPTION
-41af215ad301b24733a1226d4bfc224f *NAMESPACE
-ef70a2496e05902b6f8668ec9491c41e *NEWS
+3c9d413e3e186fac111d5f61ebc8060e *DESCRIPTION
+8340a0e5eef2f00de66808f536986de9 *NAMESPACE
+730374cbabfaa59ec1d4cc479046e62a *NEWS
 9292c14784f27d997dc700bd72e72363 *R/have_lib.r
 2b085de920879e4771110afbea429856 *R/have_lib.r.in
 98d69ce5f8d2e7617688452f528b008f *R/read_mat.r
@@ -17,12 +17,12 @@ fa689164fe8a26663f3c8ae08fc2ae08 *inst/extdata/matio_test_cases_v4_be.mat
 5731d0cb2a32be82a9965cebdf94aed3 *inst/extdata/matio_test_cases_v4_le.mat
 103479d88b99b67d35ae8e88ebb03f3c *inst/extdata/small_v4_be.mat
 39a54bc6a8307ccbc213b8b71c8d19e7 *inst/extdata/small_v4_le.mat
-554e6bf9a7595fc8b3c28def6b10715f *man/have.zlib.Rd
-41b9ea44ab45755f5f3e17d66ded7b15 *man/read.mat.Rd
-ad6efd7758e1a0d3dab08cd89b941f20 *man/rmatio.Rd
-2c3d5685473af020620502ec6792ab0b *man/write.mat-methods.Rd
+54402c543506360f3e410ca5a3616d81 *man/have.zlib.Rd
+f246206906a40a799c90e9406f259686 *man/read.mat.Rd
+7b0cb10b99f48c6ca61ca395c51550d8 *man/rmatio.Rd
+c4ccf2a42146c7081edc12351f3a4610 *man/write.mat-methods.Rd
 f5e38b3bbcbcef4ca864c9a59a624044 *src/Makevars.in
-5d3eecbfa35d7cade1eff9f6aa349e02 *src/Makevars.win
+a506328517c6edec703a29a65f0b10c2 *src/Makevars.win
 44f7f1217c635ea45fb988c8d948c7e6 *src/matio/CHANGELOG
 6ab9d7d797ab1d8dd099f57245a83e2b *src/matio/config.h.in
 6e29adabb1519e7646830db8b35149fa *src/matio/config.h.win
