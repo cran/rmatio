@@ -26,9 +26,6 @@
 ##'     to file
 ##' }
 ##' @rdname write.mat-methods
-##' @aliases write.mat
-##' @aliases write.mat-methods
-##' @aliases write.mat,list-method
 ##' @docType methods
 ##' @title Write Matlab file
 ##' @param object The \code{object} to write.
@@ -39,8 +36,6 @@
 ##' @return invisible NULL
 ##' @keywords methods
 ##' @include have_lib.r
-##' @export
-##' @useDynLib rmatio
 ##' @author Stefan Widgren
 ##' @examples
 ##' \dontrun{
@@ -152,7 +147,6 @@ setGeneric("write.mat",
                     version = c('MAT5')) standardGeneric("write.mat"))
 
 ##' @rdname write.mat-methods
-##' @include have_lib.r
 ##' @export
 setMethod("write.mat",
           signature(object = "list"),
@@ -190,7 +184,7 @@ setMethod("write.mat",
               version <- 0x0100L
               header <- sprintf("MATLAB 5.0 MAT-file, Platform: %s, Created By: rmatio v%s on %s",
                                 R.version$platform[[1]],
-                                packageVersion('rmatio'),
+                                utils::packageVersion('rmatio'),
                                 date())
             } else {
               stop('Unsupported version')
@@ -203,7 +197,7 @@ setMethod("write.mat",
               stop("All values in the list must have a unique name")
             }
 
-            .Call("write_mat", object, filename, compression, version, header)
+            .Call(write_mat, object, filename, compression, version, header)
 
             invisible(NULL)
           }

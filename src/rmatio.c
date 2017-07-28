@@ -1,6 +1,6 @@
 /*
  * rmatio, a R interface to the C library matio, MAT File I/O Library.
- * Copyright (C) 2013-2014  Stefan Widgren
+ * Copyright (C) 2013-2017  Stefan Widgren
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,22 +270,16 @@ map_R_object_dims(const SEXP elmt, size_t *dims)
  * @return 0 on succes or 1 on failure.
  */
 static int
-map_R_vecsxp_dims(const SEXP elmt,
-                  size_t *dims,
-                  int *empty)
+map_R_vecsxp_dims(const SEXP elmt, size_t *dims, int *empty)
 {
-    SEXP names;
     size_t len=0;
     int vecsxp = 0;
 
-    if (R_NilValue == elmt
-        || VECSXP != TYPEOF(elmt)
-        || NULL == dims
-        || NULL == empty)
+    if (R_NilValue == elmt || VECSXP != TYPEOF(elmt) ||
+        NULL == dims || NULL == empty)
         return 1;
 
     *empty = 0;
-    names = getAttrib(elmt, R_NamesSymbol);
 
     if (LENGTH(elmt)) {
         for (int i=0;i<LENGTH(elmt);i++) {
@@ -305,7 +299,7 @@ map_R_vecsxp_dims(const SEXP elmt,
     }
 
     if (!LENGTH(elmt)) {
-        if (R_NilValue == names) {
+        if (isNull(getAttrib(elmt, R_NamesSymbol))) {
             dims[0] = 0;
             dims[1] = 0;
         } else {
@@ -313,7 +307,7 @@ map_R_vecsxp_dims(const SEXP elmt,
             dims[1] = 1;
         }
     } else if (!len) {
-        if (R_NilValue == names || !vecsxp) {
+        if (isNull(getAttrib(elmt, R_NamesSymbol)) || !vecsxp) {
             dims[0] = 1;
             dims[1] = LENGTH(elmt);
             *empty = 1;
@@ -321,7 +315,7 @@ map_R_vecsxp_dims(const SEXP elmt,
             dims[0] = 0;
             dims[1] = 1;
         }
-    } else if (R_NilValue == names) {
+    } else if (isNull(getAttrib(elmt, R_NamesSymbol))) {
         dims[0] = LENGTH(elmt);
         dims[1] = len;
     } else {
@@ -1977,8 +1971,6 @@ read_sparse(SEXP list,
 {
     SEXP m, data;
     int *dims;
-    int *ir;              /* Array of size nnzero where ir[k] is the row of data[k] */
-    int *jc;              /* Array of size ncol+1, jc[k] index to data of first non-zero element in row k */
     mat_sparse_t *sparse;
 
     if (NULL == matvar
@@ -2022,6 +2014,12 @@ read_sparse(SEXP list,
             return 1;
         }
     } else {
+        SEXP ir, jc;
+        int *ir_ptr;  /* Array of size nnzero where ir_ptr[k] is the
+                       * row of data[k] */
+        int *jc_ptr;  /* Array of size ncol+1, jc_ptr[k] index to data
+                       * of first non-zero element in row k */
+
         if (matvar->isLogical)
             PROTECT(m = NEW_OBJECT(MAKE_CLASS("lgCMatrix")));
         else
@@ -2031,26 +2029,36 @@ read_sparse(SEXP list,
         dims[0] = matvar->dims[0];
         dims[1] = matvar->dims[1];
 
-        SET_SLOT(m, Rf_install("i"), allocVector(INTSXP, sparse->nir));
-        ir = INTEGER(GET_SLOT(m, Rf_install("i")));
-        for (int j=0;j<sparse->nir;++j)
-            ir[j] = sparse->ir[j];
+        PROTECT(ir = allocVector(INTSXP, sparse->nir));
+        SET_SLOT(m, Rf_install("i"), ir);
+        ir_ptr = INTEGER(ir);
+        for (int j=0; j<sparse->nir; ++j)
+            ir_ptr[j] = sparse->ir[j];
+        UNPROTECT(1);
 
-        SET_SLOT(m, Rf_install("p"), allocVector(INTSXP, sparse->njc));
-        jc = INTEGER(GET_SLOT(m, Rf_install("p")));
-        for (int j=0;j<sparse->njc;++j)
-            jc[j] = sparse->jc[j];
+        PROTECT(jc = allocVector(INTSXP, sparse->njc));
+        SET_SLOT(m, Rf_install("p"), jc);
+        jc_ptr = INTEGER(jc);
+        for (int j=0; j<sparse->njc; ++j)
+            jc_ptr[j] = sparse->jc[j];
+        UNPROTECT(1);
 
         if (matvar->isLogical) {
-            SET_SLOT(m, Rf_install("x"), allocVector(LGLSXP, sparse->nir));
-            data = GET_SLOT(m, Rf_install("x"));
-            for (int j=0;j<sparse->nir;++j)
-                LOGICAL(data)[j] = 1;
+            int *data_ptr;
+            PROTECT(data = allocVector(LGLSXP, sparse->nir));
+            SET_SLOT(m, Rf_install("x"), data);
+            data_ptr = LOGICAL(data);
+            for (int j=0; j<sparse->nir; ++j)
+                data_ptr[j] = 1;
+            UNPROTECT(1);
         } else {
-            SET_SLOT(m, Rf_install("x"), allocVector(REALSXP, sparse->ndata));
-            data = GET_SLOT(m, Rf_install("x"));
-            for (int j=0;j<sparse->ndata;++j)
-                REAL(data)[j] = ((double*)sparse->data)[j];
+            double *data_ptr;
+            PROTECT(data = allocVector(REALSXP, sparse->ndata));
+            SET_SLOT(m, Rf_install("x"), data);
+            data_ptr = REAL(data);
+            for (int j=0; j<sparse->ndata; ++j)
+                data_ptr[j] = ((double*)sparse->data)[j];
+            UNPROTECT(1);
         }
     }
 
@@ -2538,7 +2546,7 @@ read_structure_array_with_fields(SEXP list,
     size_t nfields = 0;
     size_t fieldlen = 0;
     int err = 0;
-    size_t protected = 0;
+    int protected = 0;
 
     if (NULL == matvar
         || MAT_C_STRUCT != matvar->class_type
@@ -2790,7 +2798,7 @@ read_cell_array_with_empty_arrays(SEXP list,
     SEXP cell_array;
     char * const * fieldnames;
     int err = 0;
-    size_t protected = 0;
+    int protected = 0;
 
     if (NULL == matvar
         || MAT_C_CELL != matvar->class_type
@@ -2971,10 +2979,9 @@ read_cell_array_with_arrays(SEXP list,
 {
     SEXP cell;
     int err = 0;
-    size_t protected = 0;
+    int protected = 0;
 
-    if (NULL == matvar
-        || NULL == matvar->dims)
+    if (NULL == matvar || NULL == matvar->dims)
         return 1;
 
     PROTECT(cell = allocVector(VECSXP, matvar->dims[0]));
@@ -3323,7 +3330,8 @@ write_mat(const SEXP list,
     if (INTEGER(compression)[0])
         use_compression = MAT_COMPRESSION_ZLIB;
 
-    names = getAttrib(list, R_NamesSymbol);
+    PROTECT(names = getAttrib(list, R_NamesSymbol));
+
     for (int i = 0; i < length(list); i++) {
         if (write_elmt(VECTOR_ELT(list, i),
                        mat,
@@ -3340,6 +3348,8 @@ write_mat(const SEXP list,
     }
 
     Mat_Close(mat);
+
+    UNPROTECT(1);
 
     return R_NilValue;
 }
@@ -3361,4 +3371,6 @@ void
 R_init_rmatio(DllInfo *info)
 {
     R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+    R_useDynamicSymbols(info, FALSE);
+    R_forceSymbols(info, TRUE);
 }
