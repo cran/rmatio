@@ -1,3 +1,15 @@
+rmatio 0.13.0
+-------------
+
+BUG FIXES
+
+* Fixed memory protection errors reported by the 'rchk' tool.
+
+* Removed an unused configuration variable.
+
+* Fixed a potential segfault error by adding a check before usage of a
+  non-null pointer to the variable name when reading data.
+
 rmatio 0.12.0
 -------------
 
