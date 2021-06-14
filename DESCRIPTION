@@ -1,6 +1,6 @@
 Package: rmatio
 Title: Read and Write 'Matlab' Files
-Version: 0.14.0
+Version: 0.15.0
 Authors@R: c( person("Stefan", "Widgren", role = c("aut", "cre"),
     email = "stefan.widgren@gmail.com", comment = "Author of the R
     interface to the C-library matio"), person("Christopher",
@@ -18,19 +18,18 @@ License: GPL-3
 URL: https://github.com/stewid/rmatio
 SystemRequirements: zlib headers and library.
 Type: Package
-LazyData: true
 Biarch: true
 Imports: Matrix, methods, utils
-Depends: R(>= 3.0.2)
+Depends: R(>= 3.2)
 Collate: 'have_lib.R' 'read_mat.R' 'rmatio.R' 'write_mat.R'
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 NeedsCompilation: yes
-Packaged: 2019-03-18 18:29:52 UTC; stefan
+Packaged: 2021-06-14 19:35:02 UTC; stefan
 Author: Stefan Widgren [aut, cre] (Author of the R interface to the C-library
     matio),
   Christopher Hulbert [aut] (Author of the C-library matio,
     http://sourceforge.net/projects/matio/)
 Maintainer: Stefan Widgren <stefan.widgren@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-03-18 20:00:07 UTC
+Date/Publication: 2021-06-14 19:50:02 UTC
