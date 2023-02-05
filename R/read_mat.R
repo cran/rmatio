@@ -1,5 +1,5 @@
 ## rmatio, a R interface to the C library matio, MAT File I/O Library.
-## Copyright (C) 2013-2014  Stefan Widgren
+## Copyright (C) 2013-2023  Stefan Widgren
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@
 ##'
 ##'   \item A sparse matrix is read as a 'dgCMatrix'
 ##'
-##'   \item A matrix of dimension  \code{1 x n} or \code{n x 1} is read as a vector
+##'   \item A matrix of dimension \code{1 x n} or \code{n x 1} is read
+##'   as a vector
 ##'
 ##'   \item A structure is read as a named list with fields.
 ##'
@@ -34,32 +35,37 @@
 ##'   \item A function class type is read as NULL and gives a warning.
 ##' }
 ##' @title Read Matlab file
-##' @param filename Character string, with the MAT file or URL to read.
+##' @param filename Character string, with the MAT file or URL to
+##'     read.
 ##' @return A list with the variables read.
-##' @seealso See \code{\link{write.mat}} for more details and examples.
+##' @seealso See \code{\link{write.mat}} for more details and
+##'     examples.
 ##' @export
 ##' @examples
 ##' ## Read a version 4 MAT file with little-endian byte ordering
-##' filename <- system.file('extdata/matio_test_cases_v4_le.mat', package='rmatio')
+##' filename <- system.file("extdata/matio_test_cases_v4_le.mat",
+##'                         package = "rmatio")
 ##' m <- read.mat(filename)
 ##'
 ##' ## View content
 ##' str(m)
 ##'
 ##' ## Read a version 4 MAT file with big-endian byte ordering.
-##' filename <- system.file('extdata/matio_test_cases_v4_be.mat', package='rmatio')
+##' filename <- system.file("extdata/matio_test_cases_v4_be.mat",
+##'                         package = "rmatio")
 ##' m <- read.mat(filename)
 ##'
 ##' ## View content
 ##' str(m)
 ##'
 ##' ## Read a compressed version 5 MAT file
-##' filename <- system.file('extdata/matio_test_cases_compressed_le.mat', package='rmatio')
+##' filename <- system.file("extdata/matio_test_cases_compressed_le.mat",
+##'                         package = "rmatio")
 ##' m <- read.mat(filename)
 ##'
 ##' ## View content
 ##' str(m)
-read.mat <- function(filename) {
+read.mat <- function(filename) { # nolint
     ## Argument checking
     stopifnot(is.character(filename),
               identical(length(filename), 1L),
@@ -70,9 +76,9 @@ read.mat <- function(filename) {
         utils::download.file(filename, tmp, quiet = TRUE, mode = "wb")
         filename <- tmp
         on.exit(unlink(filename))
-    } else if(!file.exists(filename)) {
+    } else if (!file.exists(filename)) {
         stop(sprintf("File don't exists: %s", filename))
     }
 
-    return(.Call(read_mat, filename))
+    .Call(read_mat, filename)
 }
