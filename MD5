@@ -1,6 +1,6 @@
-271e725a4491dc3ad61a545f9f5f563f *DESCRIPTION
+e8591e404fb7e71bb9ab1fa812134e41 *DESCRIPTION
 ee2c2b0f4df4f8164c749bcfd1ef0bfd *NAMESPACE
-f3c9170b7771bd0ef466391cdab30ea0 *NEWS.md
+54f55ea7db3352f0ac044380358f1782 *NEWS.md
 e7581d72563094e2a8b62fd1373f9cff *R/read_mat.R
 ef1739cfc0bc27dff82c796dd9f9da09 *R/rmatio.R
 1dfa296070c646a34baab12176cdba87 *R/write_mat.R
@@ -27,14 +27,14 @@ c5c24d06a407570d1fd252af4bc0ecfd *src/matio/endian.c
 7c92e124f82fbb09f3e2017cbdc1fde3 *src/matio/mat.c
 74786caf36344e1e1b1bfcf12639ac81 *src/matio/mat4.c
 658925ad1cbacc14241702e055b3820b *src/matio/mat4.h
-f1bd83fdbdeedc29e09b2fd90660d2de *src/matio/mat5.c
+ca2eee5e319a8eea18803fb6660fa53e *src/matio/mat5.c
 def73b5707807f1fde020baddafc5b68 *src/matio/mat5.h
 7f54d6694246a6a349db37f719397460 *src/matio/matio.h
 430a0006a5ca9d5326e156d9481af405 *src/matio/matio_private.h
 0f853c88672d98fa98692dbd43ddea7e *src/matio/matvar_cell.c
 5c0209de9a94c2ce288a25ee607c1930 *src/matio/matvar_struct.c
-b7e03f581ac07b96a214bde5e0e04ccf *src/matio/read_data.c
-5db674149913ce8dae9c9038df6c0bff *src/rmatio.c
+fd0273341ee58d2c4a7ebf10db66898e *src/matio/read_data.c
+4e0c05560a62c5d0e07f6bf2162d6d6c *src/rmatio.c
 5fe93735065b812ed1ebaef93077941e *tests/arguments.R
 e03983e6f24e759633c97f0a61afdb17 *tests/array.R
 6ca4555cf3353aa80dc7c619a1d48864 *tests/cell.R
